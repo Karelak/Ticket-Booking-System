@@ -7,7 +7,7 @@ to search and manage various aspects of the booking process.
 """
 
 import sys
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets
 from ui_files.main_window_ui import Ui_Dialog as MainWindowUI
 from ui_files.seat_manager_ui import Ui_Dialog as SeatManagerUI
 from ui_files.customer_search_ui import Ui_Dialog as CustomerSearchUI
