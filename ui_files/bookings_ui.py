@@ -32,7 +32,9 @@ class Ui_Dialog(object):
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
         self.firstname = QtWidgets.QLineEdit(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.firstname.sizePolicy().hasHeightForWidth())
@@ -53,7 +55,9 @@ class Ui_Dialog(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
         self.lastname = QtWidgets.QLineEdit(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.lastname.sizePolicy().hasHeightForWidth())
@@ -74,7 +78,9 @@ class Ui_Dialog(object):
         self.label_5.setObjectName("label_5")
         self.horizontalLayout_5.addWidget(self.label_5)
         self.bookingid = QtWidgets.QLineEdit(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.bookingid.sizePolicy().hasHeightForWidth())
@@ -95,7 +101,9 @@ class Ui_Dialog(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
         self.bookingdate = QtWidgets.QDateEdit(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.bookingdate.sizePolicy().hasHeightForWidth())
@@ -110,16 +118,22 @@ class Ui_Dialog(object):
         self.tableofresults.setRowCount(0)
         self.verticalLayout_2.addWidget(self.tableofresults)
         self.reportofselectedresult = QtWidgets.QPushButton(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.reportofselectedresult.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.reportofselectedresult.sizePolicy().hasHeightForWidth()
+        )
         self.reportofselectedresult.setSizePolicy(sizePolicy)
         self.reportofselectedresult.setFlat(False)
         self.reportofselectedresult.setObjectName("reportofselectedresult")
         self.verticalLayout_2.addWidget(self.reportofselectedresult)
         self.backtomenu = QtWidgets.QPushButton(self.layoutWidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.backtomenu.sizePolicy().hasHeightForWidth())
@@ -138,5 +152,7 @@ class Ui_Dialog(object):
         self.label_2.setText(_translate("Dialog", "Last Name"))
         self.label_5.setText(_translate("Dialog", "BookingID"))
         self.label_4.setText(_translate("Dialog", "Booking Date"))
-        self.reportofselectedresult.setText(_translate("Dialog", "Create report of selected customer booking"))
+        self.reportofselectedresult.setText(
+            _translate("Dialog", "Create report of selected customer booking")
+        )
         self.backtomenu.setText(_translate("Dialog", "Back to Menu"))
