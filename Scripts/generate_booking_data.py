@@ -292,7 +292,7 @@ def main():
     # Setup Faker with UK locale
     fake = Faker("en_GB")
 
-    db_path = "system.db"
+    db_path = "../system.db"
     db_exists = os.path.exists(db_path)
 
     if db_exists:
