@@ -184,7 +184,7 @@ class Bookings(QtWidgets.QDialog):
                             str(booking_date), "%Y-%m-%d %H:%M:%S"
                         )
                         formatted_date = parsed_date.strftime("%d/%m/%Y")
-                except:
+                except (ValueError, TypeError):
                     formatted_date = str(booking_date).split()[
                         0
                     ]  # Fallback to just using the date part
@@ -298,7 +298,7 @@ class Bookings(QtWidgets.QDialog):
                             str(show_date), "%Y-%m-%d %H:%M:%S"
                         )
                         formatted_show_date = parsed_date.strftime("%d/%m/%Y")
-                except:
+                except (ValueError, TypeError):
                     # Fallback to simpler parsing
                     formatted_booking_date = str(booking_date).split()[0]
                     formatted_show_date = str(show_date).split()[0]
