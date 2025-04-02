@@ -8,9 +8,14 @@ if not os.path.exists(ui_design_dir):
     print(f"Error: ui_design_files directory not found at {ui_design_dir}")
     exit(1)
 
+# Create ui_files directory if it doesn't exist
 if not os.path.exists(ui_files_dir):
-    print(f"Error: ui_files directory not found at {ui_files_dir}")
-    exit(1)
+    try:
+        os.makedirs(ui_files_dir)
+        print(f"Created directory: {ui_files_dir}")
+    except OSError as e:
+        print(f"Error creating ui_files directory: {e}")
+        exit(1)
 
 for filename in os.listdir(ui_design_dir):
     if filename.endswith(".ui"):
