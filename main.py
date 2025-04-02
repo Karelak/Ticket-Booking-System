@@ -46,13 +46,11 @@ class CustomerSearch(QtWidgets.QDialog):
 
         self.ui.backtomenu.clicked.connect(self.close)
 
-        # Connect search filters
         self.ui.childonly.clicked.connect(lambda: self.filter_by_type("Child"))
         self.ui.adultonly.clicked.connect(lambda: self.filter_by_type("Adult"))
         self.ui.senioronly.clicked.connect(lambda: self.filter_by_type("Senior"))
         self.ui.viponly.clicked.connect(lambda: self.filter_by_type("VIP"))
 
-        # Connect text field search
         self.ui.firstname.textChanged.connect(self.search_customers)
         self.ui.lastname.textChanged.connect(self.search_customers)
         self.ui.customerID.textChanged.connect(self.search_customers)
@@ -68,7 +66,6 @@ class CustomerSearch(QtWidgets.QDialog):
         )
 
     def load_all_customers(self):
-        """Load all customers without filtering"""
         try:
             conn = sqlite3.connect("system.db")
             cursor = conn.cursor()
@@ -86,7 +83,6 @@ class CustomerSearch(QtWidgets.QDialog):
             )
 
     def search_customers(self):
-        """Search customers based on input fields"""
         first_name = self.ui.firstname.text().strip()
         last_name = self.ui.lastname.text().strip()
         customer_id = self.ui.customerID.text().strip()
@@ -99,7 +95,6 @@ class CustomerSearch(QtWidgets.QDialog):
             query = "SELECT customers_id, name, phone, type FROM customers WHERE 1=1"
             params = []
 
-            # Add filters based on input
             if customer_id:
                 query += " AND customers_id = ?"
                 params.append(customer_id)
@@ -152,7 +147,6 @@ class CustomerSearch(QtWidgets.QDialog):
             )
 
     def populate_table(self, customers):
-        """Populate table with customer data"""
         self.ui.tableofresults.setRowCount(len(customers))
         for row, customer in enumerate(customers):
             self.ui.tableofresults.setItem(
@@ -180,10 +174,8 @@ class Bookings(QtWidgets.QDialog):
         self.ui.backtomenu.clicked.connect(self.close)
         self.ui.reportofselectedresult.clicked.connect(self.generate_report)
 
-        # Add show selection combobox
         self.setup_show_selection()
 
-        # Connect search fields
         self.ui.firstname.textChanged.connect(self.search_bookings)
         self.ui.lastname.textChanged.connect(self.search_bookings)
         self.ui.bookingid.textChanged.connect(self.search_bookings)
@@ -193,15 +185,12 @@ class Bookings(QtWidgets.QDialog):
         self.load_all_bookings()
 
     def setup_show_selection(self):
-        # Add a combobox for show selection above the existing fields
         self.show_label = QtWidgets.QLabel("Show:")
         self.show_combo = QtWidgets.QComboBox()
         self.show_combo.setMinimumHeight(25)
 
-        # Add "All Shows" option
         self.show_combo.addItem("All Shows", -1)
 
-        # Load shows from database
         try:
             conn = sqlite3.connect("system.db")
             cursor = conn.cursor()
@@ -212,7 +201,6 @@ class Bookings(QtWidgets.QDialog):
                 show_id = show[0]
                 title = show[1]
                 date = show[2]
-                # Format date for display
                 try:
                     if isinstance(date, str):
                         date_part = date.split()[0]
@@ -228,15 +216,12 @@ class Bookings(QtWidgets.QDialog):
                 self, "Database Error", f"Failed to load shows: {str(e)}"
             )
 
-        # Insert into layout at the top
         self.show_layout = QtWidgets.QHBoxLayout()
         self.show_layout.addWidget(self.show_label)
         self.show_layout.addWidget(self.show_combo)
 
-        # Insert at the beginning of vertical layout
         self.ui.verticalLayout.insertLayout(0, self.show_layout)
 
-        # Connect signal
         self.show_combo.currentIndexChanged.connect(self.search_bookings)
 
     def setup_table(self):
@@ -251,22 +236,19 @@ class Bookings(QtWidgets.QDialog):
                 "Seats",
             ]
         )
-        # Set column widths to improve display
-        self.ui.tableofresults.setColumnWidth(0, 80)  # Booking ID
-        self.ui.tableofresults.setColumnWidth(1, 150)  # Customer Name
-        self.ui.tableofresults.setColumnWidth(2, 150)  # Show Title
-        self.ui.tableofresults.setColumnWidth(3, 100)  # Booking Date
-        self.ui.tableofresults.setColumnWidth(4, 100)  # Total Price
-        self.ui.tableofresults.setColumnWidth(5, 100)  # Seats
+        self.ui.tableofresults.setColumnWidth(0, 80)
+        self.ui.tableofresults.setColumnWidth(1, 150)
+        self.ui.tableofresults.setColumnWidth(2, 150)
+        self.ui.tableofresults.setColumnWidth(3, 100)
+        self.ui.tableofresults.setColumnWidth(4, 100)
+        self.ui.tableofresults.setColumnWidth(5, 100)
 
     def load_all_bookings(self):
-        """Load all bookings without filtering"""
         try:
             conn = sqlite3.connect("system.db")
-            conn.row_factory = sqlite3.Row  # Enable row factory for named columns
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
-            # Query all bookings with customer and show information
             query = """
             SELECT 
                 b.bookings_id, 
@@ -289,18 +271,15 @@ class Bookings(QtWidgets.QDialog):
             cursor.execute(query)
             bookings = cursor.fetchall()
 
-            # Process results
             result_data = []
 
             for booking in bookings:
-                # For each booking, get the seat count in a separate query
                 booking_id = booking["bookings_id"]
                 cursor.execute(
                     "SELECT COUNT(*) FROM seats WHERE booking_id = ?", (booking_id,)
                 )
                 seat_count = cursor.fetchone()[0]
 
-                # Build a complete row with all needed data
                 result_data.append(
                     (
                         booking["bookings_id"],
@@ -313,7 +292,6 @@ class Bookings(QtWidgets.QDialog):
                     )
                 )
 
-            # Check if we found any results
             if result_data:
                 self.populate_table(result_data)
             else:
@@ -325,16 +303,13 @@ class Bookings(QtWidgets.QDialog):
             QtWidgets.QMessageBox.critical(
                 self, "Database Error", f"Failed to load bookings: {str(e)}"
             )
-            # Add debug information
             print(f"Database error in load_all_bookings: {str(e)}")
 
     def search_bookings(self):
-        """Search bookings based on input fields and selected show"""
         first_name = self.ui.firstname.text().strip()
         last_name = self.ui.lastname.text().strip()
         booking_id = self.ui.bookingid.text().strip()
 
-        # Only use date if it's not the minimum date
         use_date_filter = (
             self.ui.bookingdate.date() != self.ui.bookingdate.minimumDate()
         )
@@ -343,12 +318,11 @@ class Bookings(QtWidgets.QDialog):
         else:
             booking_date = None
 
-        # Get selected show ID
         selected_show = self.show_combo.currentData()
 
         try:
             conn = sqlite3.connect("system.db")
-            conn.row_factory = sqlite3.Row  # Enable row factory for named columns
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
             query = """
@@ -371,7 +345,6 @@ class Bookings(QtWidgets.QDialog):
 
             params = []
 
-            # Add filters based on input
             if booking_id:
                 query += " AND b.bookings_id = ?"
                 params.append(booking_id)
@@ -392,29 +365,24 @@ class Bookings(QtWidgets.QDialog):
                 query += " AND date(b.booking_date) = date(?)"
                 params.append(booking_date)
 
-            # Filter by show if not "All Shows"
             if selected_show is not None and selected_show != -1:
                 query += " AND b.show_id = ?"
                 params.append(selected_show)
 
             query += " ORDER BY b.booking_date DESC"
 
-            # Execute the main query
             cursor.execute(query, params)
             bookings = cursor.fetchall()
 
-            # Process results
             result_data = []
 
             for booking in bookings:
-                # For each booking, get the seat count in a separate query
                 booking_id = booking["bookings_id"]
                 cursor.execute(
                     "SELECT COUNT(*) FROM seats WHERE booking_id = ?", (booking_id,)
                 )
                 seat_count = cursor.fetchone()[0]
 
-                # Build a complete row with all needed data
                 result_data.append(
                     (
                         booking["bookings_id"],
@@ -427,7 +395,6 @@ class Bookings(QtWidgets.QDialog):
                     )
                 )
 
-            # Check if we found any results
             if result_data:
                 self.populate_table(result_data)
             else:
@@ -439,31 +406,25 @@ class Bookings(QtWidgets.QDialog):
             QtWidgets.QMessageBox.critical(
                 self, "Database Error", f"Failed to search bookings: {str(e)}"
             )
-            # Add debug information
             print(f"Database error in search_bookings: {str(e)}")
         except Exception as e:
             QtWidgets.QMessageBox.critical(
                 self, "Error", f"An unexpected error occurred: {str(e)}"
             )
-            # Add debug information
             print(f"Unexpected error in search_bookings: {str(e)}")
 
     def show_no_results(self):
-        """Display a message when no results are found"""
         self.ui.tableofresults.setRowCount(1)
         no_results_item = QtWidgets.QTableWidgetItem(
             "No bookings found for the selected criteria"
         )
-        no_results_item.setFlags(QtCore.Qt.ItemIsEnabled)  # Make it non-editable
-        self.ui.tableofresults.setSpan(0, 0, 1, 6)  # Span across all columns
+        no_results_item.setFlags(QtCore.Qt.ItemIsEnabled)
+        self.ui.tableofresults.setSpan(0, 0, 1, 6)
         self.ui.tableofresults.setItem(0, 0, no_results_item)
 
-        # Center the text
         self.ui.tableofresults.item(0, 0).setTextAlignment(QtCore.Qt.AlignCenter)
 
     def populate_table(self, bookings):
-        """Populate table with booking data"""
-        # First, remove any existing spans in the table
         self.ui.tableofresults.clearSpans()
 
         self.ui.tableofresults.setRowCount(len(bookings))
@@ -473,11 +434,9 @@ class Bookings(QtWidgets.QDialog):
             customer_type = booking[2]
             show_title = booking[3]
 
-            # Format date as DMY only
             booking_date = booking[4]
             try:
                 if isinstance(booking_date, str) and "T" in booking_date:
-                    # Parse ISO format date
                     parsed_date = datetime.datetime.fromisoformat(
                         booking_date.replace("Z", "+00:00")
                     )
@@ -485,13 +444,12 @@ class Bookings(QtWidgets.QDialog):
                 elif isinstance(booking_date, datetime.datetime):
                     formatted_date = booking_date.strftime("%d/%m/%Y")
                 else:
-                    # Try to parse the date if it's in another format
                     parsed_date = datetime.datetime.strptime(
                         str(booking_date), "%Y-%m-%d %H:%M:%S"
                     )
                     formatted_date = parsed_date.strftime("%d/%m/%Y")
             except (ValueError, TypeError):
-                formatted_date = str(booking_date).split()[0]  # Fallback
+                formatted_date = str(booking_date).split()[0]
 
             total_price = booking[5]
             seat_count = booking[6]
@@ -515,7 +473,6 @@ class Bookings(QtWidgets.QDialog):
                 row, 5, QtWidgets.QTableWidgetItem(f"{seat_count} seats")
             )
 
-    # ... keep generate_report method unchanged
     def generate_report(self):
         selected_items = self.ui.tableofresults.selectedItems()
         if not selected_items:
@@ -524,7 +481,6 @@ class Bookings(QtWidgets.QDialog):
             )
             return
 
-        # Get booking ID from the first column of the selected row
         row = selected_items[0].row()
         booking_id = self.ui.tableofresults.item(row, 0).text()
 
@@ -532,7 +488,6 @@ class Bookings(QtWidgets.QDialog):
             conn = sqlite3.connect("system.db")
             cursor = conn.cursor()
 
-            # Query booking details with customer and show information
             cursor.execute(
                 """
                 SELECT b.bookings_id, c.customers_id, c.name, c.type,
@@ -547,7 +502,6 @@ class Bookings(QtWidgets.QDialog):
 
             booking = cursor.fetchone()
 
-            # Get seat information
             cursor.execute(
                 """
                 SELECT seat_number, price 
@@ -562,12 +516,10 @@ class Bookings(QtWidgets.QDialog):
             seat_list = ", ".join([seat[0] for seat in seats])
 
             if booking:
-                # Format dates as DMY only
                 booking_date = booking[8]
                 show_date = booking[7]
 
                 try:
-                    # Format booking date
                     if isinstance(booking_date, str) and "T" in booking_date:
                         parsed_date = datetime.datetime.fromisoformat(
                             booking_date.replace("Z", "+00:00")
@@ -581,7 +533,6 @@ class Bookings(QtWidgets.QDialog):
                         )
                         formatted_booking_date = parsed_date.strftime("%d/%m/%Y")
 
-                    # Format show date
                     if isinstance(show_date, str) and "T" in show_date:
                         parsed_date = datetime.datetime.fromisoformat(
                             show_date.replace("Z", "+00:00")
@@ -595,11 +546,9 @@ class Bookings(QtWidgets.QDialog):
                         )
                         formatted_show_date = parsed_date.strftime("%d/%m/%Y")
                 except (ValueError, TypeError):
-                    # Fallback to simpler parsing
                     formatted_booking_date = str(booking_date).split()[0]
                     formatted_show_date = str(show_date).split()[0]
 
-                # Get price explanation based on customer type
                 customer_type = booking[3]
                 if customer_type == "VIP":
                     price_explanation = "VIP (Free admission)"
@@ -608,7 +557,6 @@ class Bookings(QtWidgets.QDialog):
                 else:
                     price_explanation = f"{customer_type} (£10.00 - standard rate)"
 
-                # Format report with more details
                 report_text = f"""
                 BOOKING REPORT
                 ------------------------------
@@ -637,7 +585,6 @@ class Bookings(QtWidgets.QDialog):
                 ------------------------------
                 """
 
-                # Display report in a dialog
                 report_dialog = QtWidgets.QDialog(self)
                 report_dialog.setWindowTitle(f"Booking Report - ID: {booking_id}")
                 report_dialog.resize(500, 500)
@@ -672,7 +619,6 @@ class Bookings(QtWidgets.QDialog):
             )
 
     def print_report(self, report_text):
-        """Print the report content."""
         printer = QtWidgets.QPrinter()
         dialog = QtWidgets.QPrintDialog(printer)
 
@@ -696,10 +642,8 @@ class SeatManager(QtWidgets.QDialog):
 
         self.ui.backtomenu.clicked.connect(self.close)
 
-        # Add show selection combobox
         self.setup_show_selection()
 
-        # Connect search fields
         self.ui.firstname.textChanged.connect(self.filter_seats)
         self.ui.lastname.textChanged.connect(self.filter_seats)
         self.ui.bookingid.textChanged.connect(self.filter_seats)
@@ -707,13 +651,11 @@ class SeatManager(QtWidgets.QDialog):
         self.setup_table()
 
     def setup_show_selection(self):
-        # Add a combobox for show selection above the existing fields
         self.show_label = QtWidgets.QLabel("Select Show:")
         self.show_label.setFont(QtGui.QFont("", 12))
         self.show_combo = QtWidgets.QComboBox()
         self.show_combo.setMinimumHeight(30)
 
-        # Load shows from database
         try:
             conn = sqlite3.connect("system.db")
             cursor = conn.cursor()
@@ -727,7 +669,6 @@ class SeatManager(QtWidgets.QDialog):
                 title = show[1]
                 date = show[2]
                 venue = show[3]
-                # Format date for display
                 try:
                     if isinstance(date, str):
                         date_part = date.split()[0]
@@ -745,15 +686,12 @@ class SeatManager(QtWidgets.QDialog):
                 self, "Database Error", f"Failed to load shows: {str(e)}"
             )
 
-        # Create a new layout for show selection
         self.show_layout = QtWidgets.QHBoxLayout()
         self.show_layout.addWidget(self.show_label)
         self.show_layout.addWidget(self.show_combo)
 
-        # Insert into verticalLayout_2 before the label
         self.ui.verticalLayout_2.insertLayout(0, self.show_layout)
 
-        # Connect signal
         self.show_combo.currentIndexChanged.connect(self.load_seats_for_show)
 
     def setup_table(self):
@@ -762,7 +700,6 @@ class SeatManager(QtWidgets.QDialog):
             ["Seat ID", "Seat Number", "Price", "Status", "Customer"]
         )
 
-        # Load seats for first show or show a message to select a show
         if self.show_combo.count() > 0:
             self.load_seats_for_show()
         else:
@@ -772,8 +709,6 @@ class SeatManager(QtWidgets.QDialog):
             )
 
     def load_seats_for_show(self):
-        """Load seats for the selected show."""
-        # Get the selected show ID
         selected_show = self.show_combo.currentData()
         if selected_show is None:
             return
@@ -782,7 +717,6 @@ class SeatManager(QtWidgets.QDialog):
             conn = sqlite3.connect("system.db")
             cursor = conn.cursor()
 
-            # Get all seats associated with this show
             cursor.execute(
                 """
                 SELECT s.seats_id, s.seat_number, s.price, s.status, c.name
@@ -821,7 +755,6 @@ class SeatManager(QtWidgets.QDialog):
                     row, 4, QtWidgets.QTableWidgetItem(customer)
                 )
 
-            # Update title with show info
             show_text = self.show_combo.currentText()
             self.ui.label.setText(f"Seat Management for {show_text}")
 
@@ -833,8 +766,6 @@ class SeatManager(QtWidgets.QDialog):
             )
 
     def filter_seats(self):
-        """Filter seats based on customer name or booking ID."""
-        # Get the selected show ID
         selected_show = self.show_combo.currentData()
         if selected_show is None:
             return
@@ -857,7 +788,6 @@ class SeatManager(QtWidgets.QDialog):
 
             params = [selected_show]
 
-            # Build query based on filters
             if booking_id:
                 query += " AND b.bookings_id = ?"
                 params.append(booking_id)
