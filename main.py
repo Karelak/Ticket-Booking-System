@@ -314,7 +314,7 @@ class Bookings(QtWidgets.QDialog):
             self.ui.bookingdate.date() != self.ui.bookingdate.minimumDate()
         )
         if use_date_filter:
-            booking_date = self.ui.bookingdate.date().toString("yyyy-MM-dd")
+            booking_date = self.ui.bookingdate.date().toString("dd-MM-yyyy")
         else:
             booking_date = None
 
